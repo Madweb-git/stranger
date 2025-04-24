@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chat anonymously with strangers by gender preference. Safe, random text chat with males, females or any gender.">
+    <meta name="keywords" content="stranger chat, anonymous chat, random chat, text chat, chat with girls, chat with boys, gender chat">
+    <meta name="robots" content="index, follow">
+    <title>StrangerTextChat - Random Chat with Gender Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .hero h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            color: var(--gray);
+        }
+        
+        .connect-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+        
+        .connect-btn:active {
+            transform: translateY(0);
+        }
+        
+        .connect-btn i {
+            margin-right: 8px;
+        }
+        
+        .gender-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .gender-option {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .gender-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .gender-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        
+        .gender-option input:checked + .gender-label {
+            border-color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.05);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.1);
+        }
+        
+        .gender-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+        }
+        
+        .gender-option input:checked + .gender-label .gender-icon {
+            color: var(--primary);
+        }
+        
+        .disclaimer {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 1.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .chat-container {
+            display: none;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            height: 500px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .chat-header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-partner {
+            display: flex;
+            align-items: center;
+        }
+        
+        .partner-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.8rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background-color: #fafafa;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            max-width: 80%;
+            position: relative;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stranger-message {
+            background-color: white;
+            margin-right: auto;
+            border: 1px solid #eee;
+            border-top-left-radius: 4px;
+        }
+        
+        .your-message {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            margin-left: auto;
+            border-top-right-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+            display: block;
+            text-align: right;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            background-color: white;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #messageInput:focus {
+            border-color: var(--primary);
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .chat-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .control-btn i {
+            margin-right: 6px;
+        }
+        
+        .control-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .disconnect-btn {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .disconnect-btn:hover {
+            background-color: rgba(214, 48, 49, 0.05);
+        }
+        
+        .report-btn {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+        
+        .report-btn:hover {
+            background-color: rgba(253, 203, 110, 0.05);
+        }
+        
+        .next-btn {
+            border-color: var(--success);
+            color: var(--success);
+        }
+        
+        .next-btn:hover {
+            background-color: rgba(0, 184, 148, 0.05);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background-color: white;
+            padding: 1.8rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .how-it-works {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin: 3rem 0;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .step h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .step p {
+            color: var(--gray);
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--dark), #2d3436);
+            color: white;
+            padding: 3rem 1rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #b2b2b2;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: inline-block;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-links a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #b2b2b2;
+        }
+        
+        @media (max-width: 768px) {
+            .steps {
+                flex-direction: column;
+            }
+            
+            .hero {
+                padding: 1.5rem;
+            }
+            
+            .gender-selection {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .gender-label {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>StrangerTextChat</h1>
+        <p class="tagline">Anonymous text chat with random people worldwide</p>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>Start Chatting with Strangers Now</h2>
+            <p>Connect instantly with random people for anonymous text conversations. Choose who you want to chat with!</p>
+            
+            <div class="gender-selection">
+                <div class="gender-option">
+                    <input type="radio" id="any-gender" name="gender" value="any" checked>
+                    <label for="any-gender" class="gender-label">
+                        <i class="fas fa-users gender-icon"></i>
+                        <span>Any Gender</span>
+                    </label>
+                </div>
+                
+                <div class="gender-option">
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male" class="gender-label">
+                        <i class="fas fa-mars gender-icon"></i>
+                        <span>Male</span>
+                    </label>
+                </div>
+                
+                <div class="gender-option">
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female" class="gender-label">
+                        <i class="fas fa-venus gender-icon"></i>
+                        <span>Female</span>
+                    </label>
+                </div>
+                
+                <div class="gender-option">
+                    <input type="radio" id="other" name="gender" value="other">
+                    <label for="other" class="gender-label">
+                        <i class="fas fa-genderless gender-icon"></i>
+                        <span>Other</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button id="connectButton" class="connect-btn">
+                <i class="fas fa-random"></i> Start Random Chat
+            </button>
+            
+            <p class="disclaimer">
+                <i class="fas fa-exclamation-circle"></i> You must be 18+ to use this service. Please be respectful to others. 
+                All chats are anonymous but may be monitored for safety.
+            </p>
+        </div>
+        
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <div class="chat-header">
+                <div class="chat-partner">
+                    <div class="partner-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span id="partnerInfo">Stranger (Male)</span>
+                </div>
+                <div class="connection-status">
+                    <i class="fas fa-circle" style="color: var(--success); font-size: 0.7rem;"></i>
+                    <span style="font-size: 0.9rem; margin-left: 0.3rem;">Connected</span>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+                <div class="message stranger-message">
+                    Stranger has joined the chat. Say hello!
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <div class="chat-controls">
+                <button class="control-btn disconnect-btn" id="disconnectBtn">
+                    <i class="fas fa-phone-slash"></i> Disconnect
+                </button>
+                <button class="control-btn report-btn" id="reportBtn">
+                    <i class="fas fa-flag"></i> Report User
+                </button>
+                <button class="control-btn next-btn" id="nextBtn">
+                    <i class="fas fa-redo"></i> Next Stranger
+                </button>
+            </div>
+        </div>
+        
+        <div class="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Choose Gender Preference</h3>
+                    <p>Select if you want to chat with males, females, any gender, or others</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Click Start Chat</h3>
+                    <p>Press the button to begin searching for a matching stranger</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Start Conversation</h3>
+                    <p>Begin your anonymous text chat with your matched partner</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Next or Disconnect</h3>
+                    <p>Move to another stranger or end the chat anytime</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Why Choose StrangerTextChat?</h2>
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <h3>100% Anonymous</h3>
+                <p>No registration required. Chat without revealing your identity for complete privacy protection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Safe Environment</h3>
+                <p>Advanced moderation with AI filtering and easy reporting keeps conversations appropriate.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Global Community</h3>
+                <p>Meet people from different countries and cultures through random text connections.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-venus-mars"></i>
+                </div>
+                <h3>Gender Selection</h3>
+                <p>Choose to chat with males, females, any gender, or others based on your preference.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Instant Connection</h3>
+                <p>No waiting time - get matched with a stranger immediately based on your criteria.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-grin-hearts"></i>
+                </div>
+                <h3>Free Forever</h3>
+                <p>Enjoy unlimited free chats with no hidden costs or premium paywalls.</p>
+            </div>
+        </div>
+        
+        <div class="how-it-works">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="feature-card" style="margin: 1.5rem 0; text-align: left;">
+                <h3><i class="fas fa-question-circle" style="color: var(--primary); margin-right: 0.5rem;"></i> Is StrangerTextChat really anonymous?</h3>
+                <p style="margin-top: 0.8rem;">Yes, we don't require any personal information or registration to start chatting. Your IP address is not visible to other users and we don't store chat logs with personal identifiers.</p>
+            </div>
+            <div class="feature-card" style="margin: 1.5rem 0; text-align: left;">
+                <h3><i class="fas fa-question-circle" style="color: var(--primary); margin-right: 0.5rem;"></i> How accurate is the gender selection?</h3>
+                <p style="margin-top: 0.8rem;">Our system matches based on user-reported gender information. While we can't guarantee 100% accuracy, our verification system helps ensure people represent themselves honestly.</p>
+            </div>
+            <div class="feature-card" style="margin: 1.5rem 0; text-align: left;">
+                <h3><i class="fas fa-question-circle" style="color: var(--primary); margin-right: 0.5rem;"></i> Can I change gender preference during a chat?</h3>
+                <p style="margin-top: 0.8rem;">You'll need to disconnect from your current chat first, then you can change your gender preference before starting a new connection.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>StrangerTextChat</h3>
+                <p style="color: #b2b2b2; margin-top: 1rem;">The safest platform for anonymous text chats with strangers worldwide.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-reddit-alien"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Start Chatting</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Safety Tips</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Success Stories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Information</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Community Guidelines</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cookie Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Report Abuse</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 StrangerTextChat. All rights reserved.</p>
+            <p style="margin-top: 0.5rem;">StrangerTextChat is for adults 18+ only. By using our service, you agree to our terms.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Gender selection and chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const connectBtn = document.getElementById('connectButton');
+            const chatContainer = document.getElementById('chatContainer');
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const reportBtn = document.getElementById('reportBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const partnerInfo = document.getElementById('partnerInfo');
+            const genderOptions = document.querySelectorAll('input[name="gender"]');
+            
+            let currentGender = 'any';
+            let isConnected = false;
+            
+            // Set up gender selection
+            genderOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    currentGender = this.value;
+                });
+            });
+            
+            // Connect button functionality
+            connectBtn.addEventListener('click', function() {
+                if (isConnected) return;
+                
+                connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                
+                // Simulate connection delay
+                setTimeout(() => {
+                    isConnected = true;
+                    connectBtn.style.display = 'none';
+                    chatContainer.style.display = 'flex';
+                    
+                    // Set partner info based on gender selection
+                    const genders = {
+                        'male': ['Male', 'fas fa-mars'],
+                        'female': ['Female', 'fas fa-venus'],
+                        'other': ['Other', 'fas fa-genderless'],
+                        'any': [Math.random() > 0.5 ? 'Male' : 'Female', 
+                               Math.random() > 0.5 ? 'fas fa-mars' : 'fas fa-venus']
+                    };
+                    
+                    const [genderText, genderIcon] = genders[currentGender];
+                    partnerInfo.textContent = `Stranger (${genderText})`;
+                    document.querySelector('.partner-avatar i').className = genderIcon;
+                    
+                    // Add welcome message
+                    addMessage('stranger', `Hello there! I'm ${genderText.toLowerCase()}. How are you today?`);
+                }, 1500);
+            });
+            
+            // Send message functionality
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                
+                if (message) {
+                    addMessage('you', message);
+                    messageInput.value = '';
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Simulate stranger reply after delay
+                    setTimeout(() => {
+                        const replies = {
+                            'male': [
+                                "That's interesting, man. Tell me more about that.",
+                                "I see what you mean. From a guy's perspective...",
+                                "Cool! What else is on your mind, bro?",
+                                "Haha, that's funny dude!",
+                                "I'm not sure I agree, but I respect your opinion man."
+                            ],
+                            'female': [
+                                "That's so interesting! I'd love to hear more.",
+                                "As a woman, I think...",
+                                "That's lovely! What else do you want to talk about?",
+                                "Haha, that's hilarious girl!",
+                                "I have a different view as a woman, but I appreciate your thoughts."
+                            ],
+                            'other': [
+                                "Fascinating perspective! Please continue.",
+                                "From my experience...",
+                                "That's wonderful! What else shall we discuss?",
+                                "Haha, that's amusing!",
+                                "I have a different viewpoint, but I value this exchange."
+                            ],
+                            'any': [
+                                "That's interesting! Tell me more.",
+                                "I never thought about it that way.",
+                                "Cool! What else do you want to talk about?",
+                                "Haha, that's funny!",
+                                "I'm not sure I agree, but I respect your opinion."
+                            ]
+                        };
+                        
+                        const genderResponses = currentGender === 'any' ? replies.any : replies[currentGender];
+                        const randomReply = genderResponses[Math.floor(Math.random() * genderResponses.length)];
+                        addMessage('stranger', randomReply);
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+            
+            // Send message on button click
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Send message on Enter key
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Add message to chat
+            function addMessage(sender, text) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.innerHTML = `
+                    ${sender === 'you' ? 'You' : 'Stranger'}: ${text}
+                    <span class="message-time">${timeString}</span>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Disconnect button
+            disconnectBtn.addEventListener('click', function() {
+                isConnected = false;
+                chatContainer.style.display = 'none';
+                connectBtn.style.display = 'inline-block';
+                connectBtn.innerHTML = '<i class="fas fa-random"></i> Start New Chat';
+                chatMessages.innerHTML = `
+                    <div class="message stranger-message">
+                        Stranger has joined the chat. Say hello!
+                        <span class="message-time">Just now</span>
+                    </div>
+                `;
+            });
+            
+            // Next stranger button
+            nextBtn.addEventListener('click', function() {
+                chatMessages.innerHTML = `
+                    <div class="message stranger-message">
+                        Connecting to new stranger...
+                        <span class="message-time">Just now</span>
+                    </div>
+                `;
+                
+                // Simulate searching for new stranger
+                setTimeout(() => {
+                    // Set new partner info based on gender selection
+                    const genders = {
+                        'male': ['Male', 'fas fa-mars'],
+                        'female': ['Female', 'fas fa-venus'],
+                        'other': ['Other', 'fas fa-genderless'],
+                        'any': [Math.random() > 0.5 ? 'Male' : 'Female', 
+                               Math.random() > 0.5 ? 'fas fa-mars' : 'fas fa-venus']
+                    };
+                    
+                    const [genderText, genderIcon] = genders[currentGender];
+                    partnerInfo.textContent = `Stranger (${genderText})`;
+                    document.querySelector('.partner-avatar i').className = genderIcon;
+                    
+                    // Add welcome message from new stranger
+                    addMessage('stranger', `Hi! I'm your new chat partner (${genderText.toLowerCase()}). How's it going?`);
+                }, 1500);
+            });
+            
+            // Report button
+            reportBtn.addEventListener('click', function() {
+                if (confirm('Report this user for inappropriate behavior?')) {
+                    alert('Thank you for reporting. Our moderators will review this conversation. Connecting you with a new stranger...');
+                    nextBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
